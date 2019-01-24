@@ -1,3 +1,6 @@
 module.exports = {
-  publicPath: 'unsplash-element'
+  publicPath: 'unsplash-element',
+  devServer: {
+    https: true
+  }
 }

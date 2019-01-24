@@ -1,28 +1,48 @@
+/* global CustomElement */
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app" v-if="loaded">
+    <input :disabled="element.disabled" v-model="element.value" placeholder="edit me">
+    <p>Saved: {{ value }}</p>
+    <p>AK: {{ element.config.accessKey }}</p>
+    <p>SK: {{ element.config.secretKey }}</p>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'app',
-  components: {
-    HelloWorld
+  data: function () {
+    return {
+      loaded: false,
+      element: {},
+      configuration: {}
+    }
+  },
+  computed: {
+    value() {
+      return this.element.value
+    }
+  },
+  watch: {
+    value: function(value) {
+      if(!this.element.disabled) {
+        CustomElement.setValue(value || null);
+      }
+    }
+  },
+  created: function() {
+    CustomElement.init((element, context) => {
+    // Set up the element with initial value
+    this.element = element
+    this.context = context
+    this.loaded = true
+    // console.log(element)
+    // console.log(context)
+})
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

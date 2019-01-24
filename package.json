@@ -5,8 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build-dev": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",
-    "deploy": "npm run build && .\\deploy.bat"
+    "deploy": "npm run build && .\\deploy.bat",
+    "deploy-dev": "npm run build-dev && .\\deploy.bat"
   },
   "dependencies": {
     "vue": "^2.5.21"
@@ -32,7 +34,10 @@
     "rules": {},
     "parserOptions": {
       "parser": "babel-eslint"
-    }
+    },
+    "globals": {
+        "CustomElement": false
+      }
   },
   "postcss": {
     "plugins": {
