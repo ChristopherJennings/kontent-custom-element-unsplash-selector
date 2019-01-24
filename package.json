@@ -11,6 +11,7 @@
     "deploy-dev": "npm run build-dev && .\\deploy.bat"
   },
   "dependencies": {
+    "unsplash-js": "^4.8.0",
     "vue": "^2.5.21"
   },
   "devDependencies": {
@@ -36,8 +37,8 @@
       "parser": "babel-eslint"
     },
     "globals": {
-        "CustomElement": false
-      }
+      "CustomElement": false
+    }
   },
   "postcss": {
     "plugins": {
