@@ -11,8 +11,10 @@
     "deploy-dev": "npm run build-dev && .\\deploy.bat"
   },
   "dependencies": {
+    "bulma": "^0.7.2",
     "unsplash-js": "^4.8.0",
-    "vue": "^2.5.21"
+    "vue": "^2.5.21",
+    "vue-images-loaded": "^1.1.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.3.0",

@@ -1,23 +1,54 @@
 /* global CustomElement */
 <template>
-  <div id="app" v-if="loaded">
-    <h1>Unsplash</h1>
-    <input :disabled="element.disabled" v-model="searchTerm" placeholder="edit me">
-    <button @click="searchPhotos">Search</button>
-    <button @click="updateSize">Height?</button>
+  <section class="section" id="app" v-if="loaded">
+    <div class="container">
+      <h1 class="title">Unsplash</h1>
+    <div>
+      <div class="field has-addons">
+        <div class="control">
+          <input
+            class="input is-rounded"
+            :disabled="element.disabled"
+            v-model="searchTerm"
+            placeholder="edit me"
+            @keyup.enter="searchPhotos"
+            @keyup.esc="searchTerm = ''"
+          >
+        </div>
+        <div class="control">
+          <button @click="searchPhotos" class="button is-rounded is-info">
+            <span class="icon">
+              <i class="fas fa-search"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div class="control">
+        <button class="button" @click="updateSize">Height?</button>
+      </div>
+    </div>
+
     <p>Saved: {{ value }} {{ height }}</p>
-    <div class="masonry">
+    <div class="masonry" v-imageload="updateSize">
       <div class="item" v-for="result in searchResults.results" :key="result.id">
-        <img :src="result.urls.thumb" />
+        <img :src="result.urls.small" />
+        <div>
+          <img :src="result.user.profile_image.small" />
+          {{ result.user.name }}
+          <button>Select</button>
+        </div>
         {{ result.description}}
       </div>
     </div>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script>
-import Unsplash, { toJson } from 'unsplash-js'
+//import Unsplash, { toJson } from 'unsplash-js'
 import SampleData from './sample.json'
+import BeachSampleData from './sample-beach.json'
+import imageload from 'vue-images-loaded'
 
 export default {
   name: 'app',
@@ -36,13 +67,17 @@ export default {
       return this.element.value
     },
     unsplashInstance() {
-      return this.loaded
-        ? new Unsplash({
-            applicationId: this.element.config.accessKey,
-            secret: this.element.config.secretKey
-          })
-        : null
+      // return this.loaded
+      //   ? new Unsplash({
+      //       applicationId: this.element.config.accessKey,
+      //       secret: this.element.config.secretKey
+      //     })
+      //   : null
+      return {}
     }
+  },
+  directives: {
+    imageload
   },
   methods: {
     searchPhotos() {
@@ -52,13 +87,14 @@ export default {
         // .then(json => {
         //   this.searchResults = json
         // })
-        this.searchResults = SampleData
+
+        this.searchResults = this.searchTerm === 'beach' ? BeachSampleData : SampleData
       }
     },
     updateSize() {
       // Update the custom element height in the Kentico UI.
       const height = document.documentElement.offsetHeight
-
+      //const diff = height - this.height
       this.height = height
       CustomElement.setHeight(height);
     }
@@ -76,12 +112,16 @@ export default {
       this.element = element
       this.context = context
       this.loaded = true
+
+      this.$nextTick(function() {
+        this.updateSize()
+      })
     })
   },
   updated: function() {
-    this.$nextTick(function() {
-      this.updateSize()
-    })
+    // this.$nextTick(function() {
+    //   this.updateSize()
+    // })
   }
 }
 
@@ -97,7 +137,7 @@ body {
   background-color: orangered;
 }
 .masonry { /* Masonry container */
-    column-count: 4;
+    column-count: 3;
     column-gap: 1em;
 }
 
