@@ -1,22 +1,30 @@
 /* global CustomElement */
 <template>
   <div id="app" v-if="loaded">
+    <h1>Unsplash</h1>
     <input :disabled="element.disabled" v-model="searchTerm" placeholder="edit me">
     <button @click="searchPhotos">Search</button>
+    <button @click="updateSize">Height?</button>
     <p>Saved: {{ value }} {{ height }}</p>
-    <pre v-html="searchResults"></pre>
+    <div class="masonry">
+      <div class="item" v-for="result in searchResults.results" :key="result.id">
+        <img :src="result.urls.thumb" />
+        {{ result.description}}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Unsplash, { toJson } from 'unsplash-js'
+import SampleData from './sample.json'
 
 export default {
   name: 'app',
   data: function () {
     return {
       loaded: false,
-      searchTerm: "",
+      searchTerm: "test",
       searchResults: "",
       height: "",
       element: {},
@@ -39,22 +47,17 @@ export default {
   methods: {
     searchPhotos() {
       if(this.unsplashInstance && this.searchTerm) {
-        this.unsplashInstance.search.photos(this.searchTerm)
-        .then(toJson)
-        .then(json => {
-          this.searchResults = json
-        })
+        // this.unsplashInstance.search.photos(this.searchTerm)
+        // .then(toJson)
+        // .then(json => {
+        //   this.searchResults = json
+        // })
+        this.searchResults = SampleData
       }
     },
     updateSize() {
       // Update the custom element height in the Kentico UI.
-      const height = Math.max(
-        document.body.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.clientHeight,
-        document.documentElement.scrollHeight,
-        document.documentElement.offsetHeight
-      )
+      const height = document.documentElement.offsetHeight
 
       this.height = height
       CustomElement.setHeight(height);
@@ -73,11 +76,12 @@ export default {
       this.element = element
       this.context = context
       this.loaded = true
-      this.updateSize()
     })
   },
   updated: function() {
-    this.updateSize()
+    this.$nextTick(function() {
+      this.updateSize()
+    })
   }
 }
 
@@ -85,5 +89,28 @@ export default {
 </script>
 
 <style>
+@import url('https://yarnpkg.com/en/package/normalize.css');
+html { background-color: crimson}
+body {
+  margin: 0;
+  padding: 8px;
+  background-color: orangered;
+}
+.masonry { /* Masonry container */
+    column-count: 4;
+    column-gap: 1em;
+}
 
+.item { /* Masonry bricks or child elements */
+    background-color: #eee;
+    display: inline-block;
+    margin: 0 0 1em;
+    width: 100%;
+}
+
+.item img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 </style>
