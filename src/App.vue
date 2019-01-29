@@ -139,8 +139,6 @@
 
 <script>
 //import Unsplash, { toJson } from 'unsplash-js'
-import SampleData from './sample.json'
-import BeachSampleData from './sample-beach.json'
 import ImageLoad from 'vue-images-loaded'
 import UnsplashAttribution from './components/unsplash-attribution'
 import Unsplash, { toJson } from 'unsplash-js'
@@ -180,8 +178,6 @@ export default {
         .then(json => {
           this.searchResults = json
         })
-
-        this.searchResults = this.searchTerm === 'beach' ? BeachSampleData : SampleData
       } else {
         this.searchResults = {}
         this.updateSize()
@@ -193,8 +189,6 @@ export default {
       this.showSearch = false
       this.searchTerm = ""
       this.searchPhotos()
-
-
     },
     clearPhoto() {
       this.element.value = null
