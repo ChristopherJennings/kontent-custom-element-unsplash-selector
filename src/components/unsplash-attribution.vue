@@ -1,8 +1,13 @@
 <template>
   <p>
-    Photo by <a :href="`https://unsplash.com/${username}?utm_source=${appName}&utm_medium=referral`" target="_blank">{{name}}</a>
-    on
-    <a :href="`https://unsplash.com/?utm_source=${appName}&utm_medium=referral`" target="_blank">Unsplash</a>
+    <span v-if="nolinks">
+      Photo by {{ name }}
+    </span>
+    <span v-else>
+      Photo by <a :href="`https://unsplash.com/${username}?utm_source=${appName}&utm_medium=referral`" rel="noopener" target="_blank">{{name}}</a>
+      on
+      <a :href="`https://unsplash.com/?utm_source=${appName}&utm_medium=referral`" rel="noopener" target="_blank">Unsplash</a>
+    </span>
   </p>
 </template>
 
@@ -22,6 +27,10 @@ export default {
       type: String,
       required: true
     },
+    nolinks: {
+      type: Boolean,
+      default: false
+    }
   }
 }
 </script>
