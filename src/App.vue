@@ -118,7 +118,11 @@
       </div>
     </div>
 
-    <pre class="content is-hidden">KC Value: {{ value }}</pre>
+    <pre
+      v-if="showDebug"
+      class="content"
+    >Stored Value:
+{{ value }}</pre>
   </section>
 </template>
 
@@ -128,6 +132,7 @@ import SampleData from './sample.json'
 import BeachSampleData from './sample-beach.json'
 import ImageLoad from 'vue-images-loaded'
 import UnsplashAttribution from './components/unsplash-attribution'
+import Unsplash, { toJson } from 'unsplash-js'
 
 export default {
   name: 'app',
@@ -138,7 +143,8 @@ export default {
       searchResults: {},
       height: "",
       element: {},
-      configuration: {}
+      configuration: {},
+      unsplashInstance: null
     }
   },
   components: {
@@ -148,14 +154,8 @@ export default {
     value() {
       return this.element.value
     },
-    unsplashInstance() {
-      // return this.loaded
-      //   ? new Unsplash({
-      //       applicationId: this.element.config.accessKey,
-      //       secret: this.element.config.secretKey
-      //     })
-      //   : null
-      return {}
+    showDebug() {
+      return this.element.config.debug
     }
   },
   directives: {
@@ -164,11 +164,11 @@ export default {
   methods: {
     searchPhotos() {
       if(this.unsplashInstance && this.searchTerm) {
-        // this.unsplashInstance.search.photos(this.searchTerm)
-        // .then(toJson)
-        // .then(json => {
-        //   this.searchResults = json
-        // })
+        this.unsplashInstance.search.photos(this.searchTerm)
+        .then(toJson)
+        .then(json => {
+          this.searchResults = json
+        })
 
         this.searchResults = this.searchTerm === 'beach' ? BeachSampleData : SampleData
       } else {
@@ -176,12 +176,14 @@ export default {
         this.updateSize()
       }
     },
-    selectPhoto(result) {
-      this.element.value = result
+    selectPhoto(selectedPhoto) {
+      this.element.value = selectedPhoto
+      this.unsplashInstance.photos.downloadPhoto(selectedPhoto)
       this.showSearch = false
       this.searchTerm = ""
       this.searchPhotos()
-      // TRIGGER UNSPLASH DOWNLOAD EVENT
+
+
     },
     clearPhoto() {
       this.element.value = null
@@ -209,6 +211,10 @@ export default {
       this.element = element
       this.element.value = JSON.parse(this.element.value)
       this.context = context
+      this.unsplashInstance = new Unsplash({
+            applicationId: this.element.config.accessKey,
+            secret: this.element.config.secretKey
+          })
       this.loaded = true
       this.updateSize()
     })
