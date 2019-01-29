@@ -27,3 +27,14 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Cloud Parameters
+```
+{
+    "accessKey": "YOUR_UNSPLASH_ACCESS_KEY",
+    "secretKey": "YOUR_UNSPLASH_SECRET_KEY",
+    "debug": true
+}
+```
+
+(debug is optional)
