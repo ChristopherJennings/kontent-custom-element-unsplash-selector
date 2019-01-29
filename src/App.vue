@@ -8,7 +8,7 @@
   >
 
     <!-- search -->
-    <div v-if="!value">
+    <div v-if="!value && unsplashInstance">
       <div class="content has-text-centered">
         <h1 class="title">
           <svg
@@ -91,6 +91,17 @@
         </masonry>
       </div>
     </div>
+    <div v-if="!unsplashInstance">
+      <p>Unsplash API keys not configured.</p>
+      <p>Please pass them in the parameters of this element (debug is optional):</p>
+<pre>
+{
+    "accessKey": "YOUR_UNSPLASH_ACCESS_KEY",
+    "secretKey": "YOUR_UNSPLASH_SECRET_KEY",
+    "debug": true
+}
+</pre>
+    </div>
 
     <!-- Have value; search hidden -->
     <div
@@ -155,7 +166,7 @@ export default {
       return this.element.value
     },
     showDebug() {
-      return this.element.config.debug
+      return this.element.config && this.element.config.debug
     }
   },
   directives: {
@@ -211,10 +222,13 @@ export default {
       this.element = element
       this.element.value = JSON.parse(this.element.value)
       this.context = context
-      this.unsplashInstance = new Unsplash({
-            applicationId: this.element.config.accessKey,
-            secret: this.element.config.secretKey
-          })
+      if(this.element.config && this.element.config.accessKey && this.element.config.secretKey) {
+        this.unsplashInstance = new Unsplash({
+          applicationId: this.element.config.accessKey,
+          secret: this.element.config.secretKey
+        })
+      }
+
       this.loaded = true
       this.updateSize()
     })
