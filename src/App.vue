@@ -6,24 +6,40 @@
     v-if="loaded"
     v-image-load="updateSize"
   >
-
-    <div class="content has-text-centered">
-      <h1 class="title is-4">
-        Unsplash
-      </h1>
-      <h2 class="subtitle is-6">
-        Beautiful, free photos.<br>
-        Gifted by the world’s most generous community of photographers. 🎁
-      </h2>
+    <!-- No Value at all; search hidden -->
+    <div
+      v-if="!value && !showSearch"
+      class="has-text-centered"
+      >
+      <svg
+        version="1.1"
+        viewBox="0 0 32 32"
+        width="32"
+        height="32"
+        aria-hidden="false"
+        >
+        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"></path>
+      </svg>
+      <br />
+      <button
+        class="button is-outlined is-black"
+        @click="showSearch = true"
+        >
+        Pick photo from Unsplash
+      </button>
     </div>
-    <div class="content">
-      <div class="field">
+
+    <!-- search shown -->
+    <div v-if="showSearch">
+      <div class="field is-grouped">
+        <div class="control">
+        </div>
         <div class="control is-expanded has-icons-left">
           <input
             class="input is-rounded is-shadowless"
             :disabled="element.disabled"
             v-model="searchTerm"
-            placeholder="Search free high-resolution photos"
+            placeholder="Search free high-resolution photos on Unsplash"
             @keyup.enter="searchPhotos"
             @keyup.esc="searchTerm = ''"
           >
@@ -42,67 +58,69 @@
           </span>
         </div>
       </div>
-    </div>
-    <masonry
-      cols="3"
-      gutter="1.5rem"
-      class="content"
-      v-image-load="updateSize"
-      v-if="searchResults.results"
-      >
-      <div class="content is-overlay-parent" v-for="result in searchResults.results" :key="result.id">
-        <img :src="result.urls.small"/>
-        <div class="is-overlay">
-          <div>
-            <figure class="image is-32x32">
-              <img
-                :src="result.user.profile_image.small"
-                class="is-rounded"
-              />
-            </figure>
+      <masonry
+        cols="3"
+        gutter="1.5rem"
+        class="content"
+        v-image-load="updateSize"
+        v-if="searchResults.results"
+        >
+        <div class="content is-overlay-parent" v-for="result in searchResults.results" :key="result.id">
+          <img :src="result.urls.small"/>
+          <div class="is-overlay">
             <div>
-              {{ result.user.name }}
-            </div>
-            <div>
-              <button
-                class="button"
-                @click="selectPhoto(result)"
-              >
-                <span class="icon is-small">
-                  <i class="fas fa-arrow-down"></i>
-                </span>
-              </button>
+              <figure class="image is-32x32">
+                <img
+                  :src="result.user.profile_image.small"
+                  class="is-rounded"
+                />
+              </figure>
+              <div>
+                {{ result.user.name }}
+              </div>
+              <div>
+                <button
+                  class="button"
+                  @click="selectPhoto(result)"
+                >
+                  <span class="icon is-small">
+                    <i class="fas fa-arrow-down"></i>
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </masonry>
+      </masonry>
+    </div>
 
-    <div class="card">
-      <header class="card-header">
-        <p class="card-header-title">
-          Selected Photo from Unsplash
-        </p>
-      </header>
-      <div
-        class="card-content"
-        v-if="loaded && value"
+    <!-- Have value; search hidden -->
+    <div
+      v-if="value && !showSearch"
+      class="unsplash-thumbnail"
       >
-        <div class="content">
-          <figure>
-            <img
-              :src="value.urls.small"
+      <div class="unsplash-preview">
+        <div class="preview-action-bar">
+          <span
+            class="icon"
+            @click="clearPhoto()"
+            >
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <img
+          :src="value.urls.small"
+          />
+        <div class="preview-credits">
+          <unsplash-attribution
+            :username="value.user.username"
+            :name="value.user.name"
             />
-          </figure>
-          {{ value.user.name }}
         </div>
       </div>
-      <footer class="card-footer">
-        <a href="#" class="card-footer-item">Change</a>
-        <a href="#" class="card-footer-item">Delete</a>
-      </footer>
     </div>
-    <pre class="content is-hidden">KC Value: {{ value }}</pre>
+
+    <pre class="content ishidden">KC Value: {{ value }}</pre>
   </section>
 </template>
 
@@ -111,18 +129,23 @@
 import SampleData from './sample.json'
 import BeachSampleData from './sample-beach.json'
 import ImageLoad from 'vue-images-loaded'
+import UnsplashAttribution from './components/unsplash-attribution'
 
 export default {
   name: 'app',
   data: function () {
     return {
       loaded: false,
+      showSearch: false,
       searchTerm: "",
-      searchResults: "",
+      searchResults: {},
       height: "",
       element: {},
       configuration: {}
     }
+  },
+  components: {
+    UnsplashAttribution
   },
   computed: {
     value() {
@@ -158,9 +181,13 @@ export default {
     },
     selectPhoto(result) {
       this.element.value = result
+      this.showSearch = false
       this.searchTerm = ""
       this.searchPhotos()
       // TRIGGER UNSPLASH DOWNLOAD EVENT
+    },
+    clearPhoto() {
+      this.element.value = null
     },
     updateSize() {
       this.$nextTick(function() {
@@ -256,4 +283,26 @@ html {
   width: 24px;
   margin: 0;
 }
+
+.unsplash-preview {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.unsplash-preview .preview-action-bar,
+.unsplash-preview .preview-credits {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: hsla(0,0%,96.1%,.85);
+  line-height: 1.5rem;
+}
+
+.unsplash-preview .preview-credits {
+  top: auto;
+  bottom: 0
+}
+
 </style>
