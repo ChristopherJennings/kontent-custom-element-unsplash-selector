@@ -6,97 +6,95 @@
     v-if="loaded"
     v-image-load="updateSize"
   >
-    <!-- No Value at all; search hidden -->
-    <div
-      v-if="!value && !showSearch"
-      class="has-text-centered"
-      >
-      <svg
-        version="1.1"
-        viewBox="0 0 32 32"
-        width="32"
-        height="32"
-        aria-hidden="false"
-        >
-        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"></path>
-      </svg>
-      <br />
-      <button
-        class="button is-outlined is-black"
-        @click="showSearch = true"
-        >
-        Pick photo from Unsplash
-      </button>
-    </div>
 
-    <!-- search shown -->
-    <div v-if="showSearch">
-      <div class="field is-grouped">
-        <div class="control">
-        </div>
-        <div class="control is-expanded has-icons-left">
-          <input
-            class="input is-rounded is-shadowless"
-            :disabled="element.disabled"
-            v-model="searchTerm"
-            placeholder="Search free high-resolution photos on Unsplash"
-            @keyup.enter="searchPhotos"
-            @keyup.esc="searchTerm = ''"
-          >
-          <span
-            class="icon is-small is-left"
-            @click="searchPhotos"
-          >
-            <i class="fas fa-search"></i>
-          </span>
-          <span
-            v-if="searchTerm"
-            class="icon is-small is-right"
-            @click="searchTerm = ''"
-          >
-            <i class="fas fa-times"></i>
-          </span>
-        </div>
+    <!-- search -->
+    <div v-if="!value">
+      <div class="content has-text-centered">
+        <h1 class="title">
+          <svg
+            version="1.1"
+            viewBox="0 0 32 32"
+            width="32"
+            height="32"
+            aria-hidden="false"
+            >
+            <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"></path>
+          </svg>
+          Unsplash
+        </h1>
       </div>
-      <masonry
-        cols="3"
-        gutter="1.5rem"
-        class="content"
-        v-image-load="updateSize"
-        v-if="searchResults.results"
-        >
-        <div class="content is-overlay-parent" v-for="result in searchResults.results" :key="result.id">
-          <img :src="result.urls.small"/>
-          <div class="is-overlay">
-            <div>
-              <figure class="image is-32x32">
-                <img
-                  :src="result.user.profile_image.small"
-                  class="is-rounded"
-                />
-              </figure>
+      <div class="content">
+        <div class="field is-grouped">
+          <div class="control">
+          </div>
+          <div class="control is-expanded has-icons-left">
+            <input
+              class="input is-rounded is-shadowless is-dark"
+              :disabled="element.disabled"
+              v-model="searchTerm"
+              placeholder="Search free high-resolution photos on Unsplash"
+              @keyup.enter="searchPhotos"
+              @keyup.esc="searchTerm = ''"
+            >
+            <span
+              class="icon is-small is-left has-text-dark"
+              @click="searchPhotos"
+            >
+              <i class="fas fa-search"></i>
+            </span>
+            <span
+              v-if="searchTerm"
+              class="icon is-small is-right"
+              @click="searchTerm = ''"
+            >
+              <i class="fas fa-times"></i>
+            </span>
+          </div>
+        </div>
+        <masonry
+          cols="3"
+          gutter="1.5rem"
+          class="content"
+          v-image-load="updateSize"
+          v-if="searchResults.results"
+          >
+          <div class="content is-overlay-parent" v-for="result in searchResults.results" :key="result.id">
+            <img :src="result.urls.small"/>
+            <div class="is-overlay">
               <div>
-                {{ result.user.name }}
-              </div>
-              <div>
-                <button
-                  class="button"
-                  @click="selectPhoto(result)"
-                >
-                  <span class="icon is-small">
-                    <i class="fas fa-arrow-down"></i>
-                  </span>
-                </button>
+                <figure class="image is-32x32">
+                  <img
+                    :src="result.user.profile_image.small"
+                    class="is-rounded"
+                  />
+                </figure>
+                <div>
+                  <unsplash-attribution
+                    :username="result.user.username"
+                    :name="result.user.name"
+                    nolinks
+                    />
+                </div>
+                <div>
+                  <button
+                    class="button"
+                    @click="selectPhoto(result)"
+                  >
+                    <span class="icon is-small">
+                      <i class="fas fa-arrow-down"></i>
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </masonry>
+        </masonry>
+      </div>
     </div>
 
     <!-- Have value; search hidden -->
     <div
-      v-if="value && !showSearch"
+      v-if="value"
       class="unsplash-thumbnail"
       >
       <div class="unsplash-preview">
@@ -120,7 +118,7 @@
       </div>
     </div>
 
-    <pre class="content ishidden">KC Value: {{ value }}</pre>
+    <pre class="content is-hidden">KC Value: {{ value }}</pre>
   </section>
 </template>
 
@@ -136,7 +134,6 @@ export default {
   data: function () {
     return {
       loaded: false,
-      showSearch: false,
       searchTerm: "",
       searchResults: {},
       height: "",
