@@ -104,30 +104,11 @@
     </div>
 
     <!-- Have value; search hidden -->
-    <div
+    <preview-selected
       v-if="value"
-      class="unsplash-thumbnail"
-      >
-      <div class="unsplash-preview">
-        <div class="preview-action-bar">
-          <span
-            class="icon"
-            @click="clearPhoto()"
-            >
-            <i class="fas fa-times"></i>
-          </span>
-        </div>
-        <img
-          :src="value.urls.small"
-          />
-        <div class="preview-credits">
-          <unsplash-attribution
-            :username="value.user.username"
-            :name="value.user.name"
-            />
-        </div>
-      </div>
-    </div>
+      :photo="value"
+      @clear-photo="clearPhoto()"
+    />
 
     <pre
       v-if="showDebug"
@@ -140,8 +121,8 @@
 <script>
 //import Unsplash, { toJson } from 'unsplash-js'
 import ImageLoad from 'vue-images-loaded'
-import UnsplashAttribution from './components/unsplash-attribution'
 import Unsplash, { toJson } from 'unsplash-js'
+import PreviewSelected from './components/preview-selected'
 
 export default {
   name: 'app',
@@ -157,7 +138,7 @@ export default {
     }
   },
   components: {
-    UnsplashAttribution
+    PreviewSelected
   },
   computed: {
     value() {
