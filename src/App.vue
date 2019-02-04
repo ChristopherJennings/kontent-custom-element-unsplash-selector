@@ -91,17 +91,7 @@
         </masonry>
       </div>
     </div>
-    <div v-if="!unsplashInstance">
-      <p>Unsplash API keys not configured.</p>
-      <p>Please pass them in the parameters of this element (debug is optional):</p>
-<pre>
-{
-    "accessKey": "YOUR_UNSPLASH_ACCESS_KEY",
-    "secretKey": "YOUR_UNSPLASH_SECRET_KEY",
-    "debug": true
-}
-</pre>
-    </div>
+    <not-configured v-if="!unsplashInstance" />
 
     <!-- Have value; search hidden -->
     <preview-selected
@@ -122,6 +112,7 @@
 //import Unsplash, { toJson } from 'unsplash-js'
 import ImageLoad from 'vue-images-loaded'
 import Unsplash, { toJson } from 'unsplash-js'
+import NotConfigured from './components/not-configured'
 import PreviewSelected from './components/preview-selected'
 
 export default {
@@ -138,7 +129,8 @@ export default {
     }
   },
   components: {
-    PreviewSelected
+    NotConfigured,
+    PreviewSelected,
   },
   computed: {
     value() {
