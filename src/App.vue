@@ -122,7 +122,6 @@ export default {
       loaded: false,
       searchTerm: "",
       searchResults: {},
-      height: "",
       element: {},
       configuration: {},
       unsplashInstance: null
@@ -168,11 +167,7 @@ export default {
     },
     updateSize() {
       this.$nextTick(function() {
-        // Update the custom element height in the Kentico UI.
-        let height = document.body.offsetHeight
-        //const diff = height - this.height
-        this.height = height
-        CustomElement.setHeight(height)
+        CustomElement.setHeight(document.body.offsetHeight)
       })
     }
   },
