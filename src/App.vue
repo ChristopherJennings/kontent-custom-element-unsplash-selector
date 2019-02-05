@@ -8,7 +8,7 @@
   >
 
     <!-- search -->
-    <div v-if="!value && unsplashInstance">
+    <div v-if="!photo && unsplashInstance">
       <div class="content has-text-centered">
         <h1 class="title">
           <svg
@@ -93,18 +93,17 @@
     </div>
     <not-configured v-if="!unsplashInstance" />
 
-    <!-- Have value; search hidden -->
     <preview-selected
-      v-if="value"
-      :photo="value"
+      v-if="photo"
+      :photo="photo"
       @clear-photo="clearPhoto()"
     />
 
     <pre
       v-if="showDebug"
       class="content"
-    >Stored Value:
-{{ value }}</pre>
+    >Selected photo details:
+{{ photo }}</pre>
   </section>
 </template>
 
@@ -120,6 +119,7 @@ export default {
   data: function () {
     return {
       loaded: false,
+      photo: null,
       searchTerm: "",
       searchResults: {},
       element: {},
@@ -132,9 +132,6 @@ export default {
     PreviewSelected,
   },
   computed: {
-    value() {
-      return this.element.value
-    },
     showDebug() {
       return this.element.config && this.element.config.debug
     }
@@ -155,15 +152,18 @@ export default {
         this.updateSize()
       }
     },
-    selectPhoto(selectedPhoto) {
-      this.element.value = selectedPhoto
-      this.unsplashInstance.photos.downloadPhoto(selectedPhoto)
+    selectPhoto(photo) {
+      // Tell Unsplash that the photo was selected
+      this.unsplashInstance.photos.downloadPhoto(photo)
+      // Copy the photo details to local state
+      this.photo = photo
+
       this.showSearch = false
       this.searchTerm = ""
       this.searchPhotos()
     },
     clearPhoto() {
-      this.element.value = null
+      this.photo = null
     },
     updateSize() {
       this.$nextTick(function() {
@@ -172,18 +172,30 @@ export default {
     }
   },
   watch: {
-    value: function(value) {
+    photo: function(photo) {
       if(!this.element.disabled) {
-        CustomElement.setValue(JSON.stringify(value) || null);
+        // Push new value out to Kentico Cloud
+        const newValue = photo ? JSON.stringify(photo) : ""
+        CustomElement.setValue(newValue);
       }
     }
   },
   created: function() {
+    // Perform init of Kentico CLoud Custom Element code
     CustomElement.init((element, context) => {
-      // Set up the element with initial value
+      // Map element and context details to local state
       this.element = element
-      this.element.value = JSON.parse(this.element.value)
       this.context = context
+
+      // Load previously saved data as JSON
+      try {
+        this.photo = JSON.parse(element.value)
+      } catch (error) {
+        // TODO: display error to user
+        this.photo = null
+      }
+
+      // Instantiate Unsplash API
       if(this.element.config && this.element.config.accessKey && this.element.config.secretKey) {
         this.unsplashInstance = new Unsplash({
           applicationId: this.element.config.accessKey,
