@@ -4,100 +4,23 @@
     class="section"
     id="app"
     v-if="loaded"
-    v-image-load="updateSize"
   >
 
-    <!-- search -->
-    <div v-if="!photo && unsplashInstance">
-      <div class="content has-text-centered">
-        <h1 class="title">
-          <svg
-            version="1.1"
-            viewBox="0 0 32 32"
-            width="32"
-            height="32"
-            aria-hidden="false"
-            >
-            <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"></path>
-          </svg>
-          Unsplash
-        </h1>
-      </div>
-      <div class="content">
-        <div class="field is-grouped">
-          <div class="control">
-          </div>
-          <div class="control is-expanded has-icons-left">
-            <input
-              class="input is-rounded is-shadowless is-dark"
-              :disabled="element.disabled"
-              v-model="searchTerm"
-              placeholder="Search free high-resolution photos on Unsplash"
-              @keyup.enter="searchPhotos"
-              @keyup.esc="searchTerm = ''"
-            >
-            <span
-              class="icon is-small is-left has-text-dark"
-              @click="searchPhotos"
-            >
-              <i class="fas fa-search"></i>
-            </span>
-            <span
-              v-if="searchTerm"
-              class="icon is-small is-right"
-              @click="searchTerm = ''"
-            >
-              <i class="fas fa-times"></i>
-            </span>
-          </div>
-        </div>
-        <masonry
-          cols="3"
-          gutter="1.5rem"
-          class="content"
-          v-image-load="updateSize"
-          v-if="searchResults.results"
-          >
-          <div class="content is-overlay-parent" v-for="result in searchResults.results" :key="result.id">
-            <img :src="result.urls.small"/>
-            <div class="is-overlay">
-              <div>
-                <figure class="image is-32x32">
-                  <img
-                    :src="result.user.profile_image.small"
-                    class="is-rounded"
-                  />
-                </figure>
-                <div>
-                  <unsplash-attribution
-                    :username="result.user.username"
-                    :name="result.user.name"
-                    nolinks
-                    />
-                </div>
-                <div>
-                  <button
-                    class="button"
-                    @click="selectPhoto(result)"
-                  >
-                    <span class="icon is-small">
-                      <i class="fas fa-arrow-down"></i>
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </masonry>
-      </div>
-    </div>
     <not-configured v-if="!unsplashInstance" />
 
     <preview-selected
-      v-if="photo"
+      v-else-if="photo"
+      :disabled="element.disabled"
       :photo="photo"
       @clear-photo="clearPhoto()"
     />
+
+    <unsplash-selector
+      v-else
+      :disabled="element.disabled"
+      :unsplashInstance="unsplashInstance"
+      @select-photo="(selection) => photo = selection"
+      />
 
     <pre
       v-if="showDebug"
@@ -108,20 +31,17 @@
 </template>
 
 <script>
-//import Unsplash, { toJson } from 'unsplash-js'
-import ImageLoad from 'vue-images-loaded'
-import Unsplash, { toJson } from 'unsplash-js'
+import Unsplash from 'unsplash-js'
 import NotConfigured from './components/not-configured'
 import PreviewSelected from './components/preview-selected'
+import UnsplashSelector from './components/unsplash-selector'
 
 export default {
   name: 'app',
-  data: function () {
+  data() {
     return {
       loaded: false,
       photo: null,
-      searchTerm: "",
-      searchResults: {},
       element: {},
       configuration: {},
       unsplashInstance: null
@@ -130,45 +50,17 @@ export default {
   components: {
     NotConfigured,
     PreviewSelected,
+    UnsplashSelector,
   },
   computed: {
     showDebug() {
       return this.element.config && this.element.config.debug
     }
   },
-  directives: {
-    ImageLoad
-  },
   methods: {
-    searchPhotos() {
-      if(this.unsplashInstance && this.searchTerm) {
-        this.unsplashInstance.search.photos(this.searchTerm)
-        .then(toJson)
-        .then(json => {
-          this.searchResults = json
-        })
-      } else {
-        this.searchResults = {}
-        this.updateSize()
-      }
-    },
-    selectPhoto(photo) {
-      // Tell Unsplash that the photo was selected
-      this.unsplashInstance.photos.downloadPhoto(photo)
-      // Copy the photo details to local state
-      this.photo = photo
-
-      this.showSearch = false
-      this.searchTerm = ""
-      this.searchPhotos()
-    },
     clearPhoto() {
       this.photo = null
-    },
-    updateSize() {
-      this.$nextTick(function() {
-        CustomElement.setHeight(document.body.offsetHeight)
-      })
+      this.$CustomElement.updateSize()
     }
   },
   watch: {
@@ -204,7 +96,7 @@ export default {
       }
 
       this.loaded = true
-      this.updateSize()
+      this.$CustomElement.updateSize()
     })
   }
 }
