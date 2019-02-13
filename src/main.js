@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import VueMasonry from 'vue-masonry-css'
+import VueResize from 'vue-resize'
 import ImagesLoaded from 'vue-images-loaded'
 import App from './App.vue'
 import KenticoCloudCustomElement from './plugins/kentico-cloud-custom-element'
 
 import 'bulma/css/bulma.css'
+import 'vue-resize/dist/vue-resize.css'
 
 Vue.use(VueMasonry);
+Vue.use(VueResize);
 Vue.use(KenticoCloudCustomElement)
 
 Vue.directive('images-loaded', ImagesLoaded)

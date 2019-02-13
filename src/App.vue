@@ -27,6 +27,7 @@
       class="content"
     >Selected photo details:
 {{ photo }}</pre>
+    <resize-observer @notify="$CustomElement.updateSize" />
   </section>
 </template>
 
@@ -60,7 +61,6 @@ export default {
   methods: {
     clearPhoto() {
       this.photo = null
-      this.$CustomElement.updateSize()
     }
   },
   watch: {
@@ -110,6 +110,7 @@ html {
 }
 #app {
   padding: .5rem;
+  position: relative;
 }
 
 .is-overlay-parent {

@@ -1,7 +1,6 @@
 <template>
   <div
     class="unsplash-thumbnail"
-    v-images-loaded="$CustomElement.updateSize"
     >
     <div class="unsplash-preview">
       <div class="preview-action-bar">
