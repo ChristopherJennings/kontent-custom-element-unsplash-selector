@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueMasonry from 'vue-masonry-css'
 import VueResize from 'vue-resize'
-import ImagesLoaded from 'vue-images-loaded'
 import App from './App.vue'
 import KenticoCloudCustomElement from './plugins/kentico-cloud-custom-element'
 import Unsplash from './plugins/unsplash'
@@ -13,8 +12,6 @@ Vue.use(VueMasonry);
 Vue.use(VueResize);
 Vue.use(KenticoCloudCustomElement)
 Vue.use(Unsplash)
-
-Vue.directive('images-loaded', ImagesLoaded)
 
 Vue.config.productionTip = false
 
