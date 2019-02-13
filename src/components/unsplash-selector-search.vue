@@ -80,11 +80,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    unsplashInstance: {
-      type: Object,
-      required: true,
     },
-  },
   data() {
     return {
       searchTerm: "",
@@ -93,8 +89,9 @@ export default {
   },
   methods: {
     searchPhotos() {
-      if(this.unsplashInstance && this.searchTerm) {
-        this.unsplashInstance.search.photos(this.searchTerm)
+      const unsplash = this.$Unsplash.Instance
+      if(this.searchTerm && unsplash) {
+        unsplash.search.photos(this.searchTerm)
         .then(toJson)
         .then(json => {
           this.searchResponse = json
@@ -105,14 +102,8 @@ export default {
     },
     selectPhoto(photo) {
       // Tell Unsplash that the photo was selected
-      this.unsplashInstance.photos.downloadPhoto(photo)
+      this.$Unsplash.Instance.photos.downloadPhoto(photo)
       this.$emit('select-photo', photo)
-      // Copy the photo details to local state
-      // this.photo = photo
-
-      // this.showSearch = false
-      // this.searchTerm = ""
-      // this.searchPhotos()
     },
   }
 }

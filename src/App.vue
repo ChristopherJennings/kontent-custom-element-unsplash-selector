@@ -5,7 +5,7 @@
     v-if="loaded"
   >
 
-    <not-configured v-if="!unsplashInstance" />
+    <not-configured v-if="!$Unsplash.Instance" />
 
     <preview-selected
       v-else-if="photo"
@@ -17,7 +17,6 @@
     <unsplash-selector
       v-else
       :disabled="element.disabled"
-      :unsplashInstance="unsplashInstance"
       @select-photo="(selection) => photo = selection"
       />
 
@@ -31,7 +30,6 @@
 </template>
 
 <script>
-import Unsplash from 'unsplash-js'
 import NotConfigured from './components/not-configured'
 import PreviewSelected from './components/preview-selected'
 import UnsplashSelector from './components/unsplash-selector'
@@ -44,7 +42,6 @@ export default {
       photo: null,
       element: {},
       configuration: {},
-      unsplashInstance: null
     }
   },
   components: {
@@ -88,7 +85,7 @@ export default {
 
       // Instantiate Unsplash API
       if(this.element.config && this.element.config.accessKey && this.element.config.secretKey) {
-        this.unsplashInstance = new Unsplash({
+        this.$Unsplash.createInstance({
           applicationId: this.element.config.accessKey,
           secret: this.element.config.secretKey
         })

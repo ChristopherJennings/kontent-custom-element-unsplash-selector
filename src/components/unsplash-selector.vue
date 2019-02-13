@@ -3,7 +3,6 @@
     <unsplash-selector-header />
     <unsplash-selector-search
       :disabled="disabled"
-      :unsplashInstance="unsplashInstance"
       @select-photo="(photo) => $emit('select-photo', photo)"
       />
   </div>
@@ -23,10 +22,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-    },
-    unsplashInstance: {
-      type: Object,
-      required: true,
     },
   }
 }
