@@ -7,8 +7,7 @@
     "build": "vue-cli-service build",
     "build-dev": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",
-    "deploy": "npm run build && .\\deploy.bat",
-    "deploy-dev": "npm run build-dev && .\\deploy.bat"
+    "deploy": "npm run build && deploy.sh"
   },
   "dependencies": {
     "bulma": "^0.7.2",
