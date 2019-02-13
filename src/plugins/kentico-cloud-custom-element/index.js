@@ -8,6 +8,10 @@ export default {
         vue.nextTick(function() {
           CustomElement.setHeight(document.body.offsetHeight)
         })
+      },
+
+      setValue(value) {
+        CustomElement.setValue(value)
       }
     }
   }

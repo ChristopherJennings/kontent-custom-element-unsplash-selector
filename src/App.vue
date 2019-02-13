@@ -1,4 +1,3 @@
-/* global CustomElement */
 <template>
   <section
     class="section"
@@ -68,7 +67,7 @@ export default {
       if(!this.element.disabled) {
         // Push new value out to Kentico Cloud
         const newValue = photo ? JSON.stringify(photo) : ""
-        CustomElement.setValue(newValue);
+        this.$CustomElement.setValue(newValue);
       }
     }
   },
