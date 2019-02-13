@@ -18,62 +18,29 @@
         </span>
       </div>
     </div>
-    <masonry
-      cols="3"
-      gutter="1.5rem"
-      class="content"
+    <unsplash-selector-results
       v-if="searchResponse.results"
-      v-images-loaded="$CustomElement.updateSize"
-      >
-      <div class="content is-overlay-parent" v-for="result in searchResponse.results" :key="result.id">
-        <img :src="result.urls.small"/>
-        <div class="is-overlay">
-          <div>
-            <figure class="image is-32x32">
-              <img
-                :src="result.user.profile_image.small"
-                class="is-rounded"
-              />
-            </figure>
-            <div>
-              <unsplash-attribution
-                :username="result.user.username"
-                :name="result.user.name"
-                nolinks
-                />
-            </div>
-            <div>
-              <button
-                class="button"
-                @click="selectPhoto(result)"
-              >
-                <span class="icon is-small">
-                  <i class="fas fa-arrow-down"></i>
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </masonry>
+      :results="searchResponse.results"
+      @select-photo="selectPhoto"
+      />
   </div>
 </template>
 
 <script>
 import { toJson } from 'unsplash-js'
-import UnsplashAttribution from './unsplash-attribution'
+import UnsplashSelectorResults from './unsplash-selector-results'
 
 export default {
   name: 'unsplash-selector-search',
   components: {
-    UnsplashAttribution
+    UnsplashSelectorResults
   },
   props: {
     disabled: {
       type: Boolean,
       default: false,
     },
-    },
+  },
   data() {
     return {
       searchTerm: "",
