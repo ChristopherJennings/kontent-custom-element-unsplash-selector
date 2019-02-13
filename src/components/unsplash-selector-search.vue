@@ -16,13 +16,6 @@
         >
           <i class="fas fa-search"></i>
         </span>
-        <span
-          v-if="searchTerm"
-          class="icon is-small is-right"
-          @click="searchTerm = ''"
-        >
-          <i class="fas fa-times"></i>
-        </span>
       </div>
     </div>
     <masonry
