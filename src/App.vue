@@ -9,14 +9,14 @@
 
     <preview-selected
       v-else-if="photo"
-      :disabled="element.disabled"
+      :disabled="disabled"
       :photo="photo"
       @clear-photo="clearPhoto()"
     />
 
     <unsplash-selector
       v-else
-      :disabled="element.disabled"
+      :disabled="disabled"
       @select-photo="(selection) => photo = selection"
       />
 
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       loaded: false,
+      disabled: false,
       photo: null,
       element: {},
       configuration: {},
@@ -57,6 +58,9 @@ export default {
   methods: {
     clearPhoto() {
       this.photo = null
+    },
+    handleDisable(disableState) {
+      this.disabled = disableState
     }
   },
   watch: {
@@ -90,10 +94,11 @@ export default {
           secret: this.element.config.secretKey
         })
       }
-
       this.loaded = true
       this.$CustomElement.updateSize()
     })
+
+    CustomElement.onDisabledChanged(this.handleDisable);
   }
 }
 

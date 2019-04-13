@@ -7,6 +7,7 @@
         <span
           class="icon"
           @click="$emit('clear-photo')"
+          v-if="!disabled"
           >
           <i class="fas fa-times"></i>
         </span>
@@ -35,7 +36,11 @@ export default {
     photo: {
       type: Object,
       required: true,
-    }
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   }
 }
 </script>
