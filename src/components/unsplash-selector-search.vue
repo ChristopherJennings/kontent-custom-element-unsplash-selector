@@ -7,7 +7,7 @@
           :disabled="disabled"
           v-model="searchTerm"
           placeholder="Search free high-resolution photos on Unsplash"
-          @keyup.enter="searchPhotos"
+          @keyup.enter="searchPhotos(1)"
           @keyup.esc="searchTerm = ''"
         >
         <span
@@ -19,10 +19,11 @@
       </div>
     </div>
     <unsplash-selector-results
-      v-if="searchResponse.results"
-      :results="searchResponse.results"
+      v-if="searchResults"
+      :results="searchResults"
       @select-photo="selectPhoto"
       />
+      <button v-if="showLoadMore" @click="searchPhotos(nextPageToLoad)" style="margin-top: 1rem" class="button is-outlined is-rounded is-black is-fullwidth">Load More</button>
   </div>
 </template>
 
@@ -44,20 +45,31 @@ export default {
   data() {
     return {
       searchTerm: "",
-      searchResponse: {}
+      searchResponse: {},
+      searchResults: null,
+      nextPageToLoad: 1
     }
   },
   methods: {
-    searchPhotos() {
+    searchPhotos(page) {
+      this.nextPageToLoad = page ? page : this.nextPageToLoad
       const unsplash = this.$Unsplash.Instance
       if(this.searchTerm && unsplash) {
-        unsplash.search.photos(this.searchTerm)
+        unsplash.search.photos(this.searchTerm, this.nextPageToLoad)
         .then(toJson)
         .then(json => {
           this.searchResponse = json
+          if(this.searchResults === null) {
+            this.searchResults = this.searchResponse.results
+          } else {
+            this.searchResults.push(...this.searchResponse.results)
+          }
+          this.nextPageToLoad = this.nextPageToLoad + 1
         })
       } else {
         this.searchResponse = {}
+        this.searchResults = null
+        this.nextPageToLoad = 1
       }
     },
     selectPhoto(photo) {
@@ -65,6 +77,18 @@ export default {
       this.$Unsplash.Instance.photos.downloadPhoto(photo)
       this.$emit('select-photo', photo)
     },
+  },
+  computed: {
+    showLoadMore: function() {
+      return this.searchResponse && this.searchResponse.total_pages >= this.nextPageToLoad
+    }
+  },
+  watch: {
+    searchTerm: function () {
+      this.nextPageToLoad = 1
+      this.searchResponse = {}
+      this.searchResults = null
+    }
   }
 }
 </script>
