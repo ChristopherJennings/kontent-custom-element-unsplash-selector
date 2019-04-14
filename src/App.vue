@@ -87,6 +87,8 @@ export default {
         this.photo = null
       }
 
+      this.disabled = this.element.disabled
+
       // Instantiate Unsplash API
       if(this.element.config && this.element.config.accessKey && this.element.config.secretKey) {
         this.$Unsplash.createInstance({
