@@ -67,7 +67,7 @@ export default {
     photo: function(photo) {
       if(!this.element.disabled) {
         // Push new value out to Kentico Cloud
-        const newValue = photo ? JSON.stringify(photo) : ""
+        const newValue = photo ? JSON.stringify(photo) : null
         this.$CustomElement.setValue(newValue);
       }
     }
