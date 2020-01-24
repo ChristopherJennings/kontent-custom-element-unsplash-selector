@@ -1,6 +1,10 @@
+const fs = require("fs");
+
 module.exports = {
-  publicPath: 'unsplash-element',
   devServer: {
-    https: true
+    https: {
+      key: fs.readFileSync("./certs/localhost.key"),
+      cert: fs.readFileSync("./certs/localhost.cert")
+    }
   }
 }
