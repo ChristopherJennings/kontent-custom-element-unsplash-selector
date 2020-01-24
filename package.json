@@ -10,8 +10,8 @@
     "deploy": "npm run build && deploy.sh"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "bulma": "^0.7.2",
-    "unsplash-js": "^4.8.0",
     "vue": "^2.5.21",
     "vue-resize": "^0.4.5"
   },

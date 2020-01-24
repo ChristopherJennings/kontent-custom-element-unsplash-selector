@@ -4,11 +4,8 @@
     id="app"
     v-if="loaded"
   >
-
-    <not-configured v-if="!$Unsplash.Instance" />
-
     <preview-selected
-      v-else-if="photo"
+      v-if="photo"
       :disabled="disabled"
       :photo="photo"
       @clear-photo="clearPhoto()"
@@ -30,7 +27,6 @@
 </template>
 
 <script>
-import NotConfigured from './components/not-configured'
 import PreviewSelected from './components/preview-selected'
 import UnsplashSelector from './components/unsplash-selector'
 
@@ -46,7 +42,6 @@ export default {
     }
   },
   components: {
-    NotConfigured,
     PreviewSelected,
     UnsplashSelector,
   },
@@ -88,14 +83,6 @@ export default {
       }
 
       this.disabled = this.element.disabled
-
-      // Instantiate Unsplash API
-      if(this.element.config && this.element.config.accessKey && this.element.config.secretKey) {
-        this.$Unsplash.createInstance({
-          applicationId: this.element.config.accessKey,
-          secret: this.element.config.secretKey
-        })
-      }
       this.loaded = true
       this.$CustomElement.updateSize()
     })

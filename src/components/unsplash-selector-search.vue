@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { toJson } from 'unsplash-js'
+import unsplash from '../unsplashApi'
 import UnsplashSelectorResults from './unsplash-selector-results'
 
 export default {
@@ -53,12 +53,9 @@ export default {
   methods: {
     searchPhotos(page) {
       this.nextPageToLoad = page ? page : this.nextPageToLoad
-      const unsplash = this.$Unsplash.Instance
-      if(this.searchTerm && unsplash) {
-        unsplash.search.photos(this.searchTerm, this.nextPageToLoad)
-        .then(toJson)
-        .then(json => {
-          this.searchResponse = json
+      if(this.searchTerm) {
+        unsplash.searchPhotos(this.searchTerm, this.nextPageToLoad).then(response =>{
+          this.searchResponse = response.data
           if(this.searchResults === null) {
             this.searchResults = this.searchResponse.results
           } else {
@@ -74,7 +71,7 @@ export default {
     },
     selectPhoto(photo) {
       // Tell Unsplash that the photo was selected
-      this.$Unsplash.Instance.photos.downloadPhoto(photo)
+      unsplash.trackDownload(photo.id)
       this.$emit('select-photo', photo)
     },
   },
